@@ -1,8 +1,3 @@
-📣 This project is no longer maintained. Please see my
-[blog post](https://wstone.uk/blog/the-retirement-of-browserosaurus/) for the
-final thoughts on the project. Thank you everyone who has enjoyed using my
-little app 🤓
-
 <img src="./docs/icon_squooshed.png" alt="logo" width="100" height="100" align="right" />
 
 # Browserosaurus
@@ -10,8 +5,25 @@ little app 🤓
 Browserosaurus is an open-source (GPLv3 license) browser prompter for macOS. It
 works by setting itself as the default browser, and any clicked links in
 non-browser apps are now sent to Browserosaurus where you are presented with a
-menu of all your installed browsers. You may now decide which app you’d like to
+menu of all your installed browsers. You may now decide which app you'd like to
 continue opening the link with.
+
+> This is a fork of the
+> [original Browserosaurus](https://github.com/will-stone/browserosaurus) which
+> is no longer maintained.
+
+## Dynamic Browser Detection
+
+This fork includes **automatic browser detection**. Browserosaurus now
+dynamically discovers any app that can handle HTTP/HTTPS URLs by scanning their
+`Info.plist` for URL schemes. This means:
+
+- New browsers appear automatically without code changes
+- Custom browser installations (like Vivaldi profiles) are detected
+- URL-capable apps (VLC, iTerm, etc.) can be used to open links
+
+Known browsers in the hardcoded list still get special features like private
+browsing mode support (`--incognito`, `--private-window`, etc.).
 
 <img src="./docs/screenshot.jpg" alt="screenshot" />
 
