@@ -3,10 +3,10 @@ import path from 'node:path'
 
 import { sleep } from 'tings'
 
-import type { AppName } from '../../config/apps.js'
 import { apps } from '../../config/apps.js'
 import { retrievedInstalledApps, startedScanning } from '../state/actions.js'
 import { dispatch } from '../state/store.js'
+import { getUrlCapableAppNames } from './get-url-capable-apps.js'
 
 function getAllInstalledAppNames(): string[] {
   const appNames = execSync(
@@ -25,19 +25,26 @@ async function getInstalledAppNames(): Promise<void> {
 
   const allInstalledAppNames = getAllInstalledAppNames()
 
-  const installedApps = Object.keys(apps).filter((appName) =>
+  // Get hardcoded apps that are installed
+  const installedHardcodedApps = Object.keys(apps).filter((appName) =>
     allInstalledAppNames.includes(appName),
-  ) as AppName[]
+  )
+
+  // Get dynamically discovered URL-capable apps
+  const urlCapableApps = getUrlCapableAppNames()
+
+  // Merge both lists, removing duplicates (hardcoded apps take precedence)
+  const allApps = [...new Set([...installedHardcodedApps, ...urlCapableApps])]
 
   // It appears that sometimes the installed app IDs are not fetched, maybe a
   // race with Spotlight index? So if none found, keep retrying.
   // TODO is this needed any more, now using we're `find` method?
   // https://github.com/will-stone/browserosaurus/issues/425
-  if (installedApps.length === 0) {
+  if (allApps.length === 0) {
     await sleep(500)
     getInstalledAppNames()
   } else {
-    dispatch(retrievedInstalledApps(installedApps))
+    dispatch(retrievedInstalledApps(allApps))
   }
 }
 

@@ -1,7 +1,12 @@
 import { execFile } from 'node:child_process'
 
-import type { AppName } from '../../config/apps.js'
+import type { AppName, KnownAppName } from '../../config/apps.js'
 import { apps } from '../../config/apps.js'
+
+type AppConfig = {
+  privateArg?: string
+  convertUrl?: (url: string) => string
+}
 
 export function openApp(
   appName: AppName,
@@ -9,16 +14,20 @@ export function openApp(
   isAlt: boolean,
   isShift: boolean,
 ): void {
-  const selectedApp = apps[appName]
+  // Check if this is a known app with special configuration
+  const isKnownApp = appName in apps
+  const selectedApp: AppConfig | null = isKnownApp
+    ? apps[appName as KnownAppName]
+    : null
 
   const convertedUrl =
-    'convertUrl' in selectedApp ? selectedApp.convertUrl(url) : url
+    selectedApp?.convertUrl ? selectedApp.convertUrl(url) : url
 
   const openArguments: string[] = [
     '-a',
     appName,
     isAlt ? '--background' : [],
-    isShift && 'privateArg' in selectedApp
+    isShift && selectedApp?.privateArg
       ? ['--new', '--args', selectedApp.privateArg]
       : [],
     // In order for private/incognito mode to work the URL needs to be passed

@@ -178,6 +178,10 @@ const apps = typeApps({
 
 type Apps = typeof apps
 
-type AppName = keyof typeof apps
+// KnownAppName is for hardcoded apps with special config (privateArg, convertUrl)
+type KnownAppName = keyof typeof apps
 
-export { AppName, Apps, apps }
+// AppName can be any string to support dynamically discovered apps
+type AppName = string
+
+export { AppName, Apps, apps, KnownAppName }
